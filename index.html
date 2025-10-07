@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNOC RELAY - Olympic Solidarity Funding Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0081C8;
+            --secondary-blue: #0051A5;
+            --success-green: #10B981;
+            --warning-yellow: #F59E0B;
+            --danger-red: #EF4444;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.5;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .site-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .site-title h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .site-title p {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .user-role {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-blue);
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray-300);
+        }
+
+        /* Navigation */
+        .nav {
+            background-color: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 2rem;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-item {
+            padding: 1rem 0;
+            color: var(--gray-600);
+            text-decoration: none;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            color: var(--primary-blue);
+        }
+
+        .nav-item.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--gray-200);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon.blue {
+            background-color: rgba(0, 129, 200, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .stat-icon.green {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .stat-icon.yellow {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-yellow);
+        }
+
+        .stat-icon.purple {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: #8B5CF6;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .stat-change {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success-green);
+        }
+
+        .stat-change.negative {
+            color: var(--danger-red);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-actions h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--gray-900);
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-card {
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--gray-50);
+        }
+
+        .action-card:hover {
+            background: white;
+            border-color: var(--primary-blue);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .action-description {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: var(--gray-50);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        tr:hover {
+            background-color: var(--gray-50);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .status-badge.pending {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-yellow);
+        }
+
+        .status-badge.completed {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+        }
+
+        /* Filters */
+        .filter-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            background: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav-content {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .table-container {
+                padding: 1rem;
+            }
+
+            .site-title h1 {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">PNOC</div>
+                <div class="site-title">
+                    <h1>RELAY Platform</h1>
+                    <p>Olympic Solidarity Funding Tracker</p>
+                </div>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="#dashboard" class="nav-item active">Dashboard</a>
+            <a href="#activities" class="nav-item">Activities</a>
+            <a href="#applications" class="nav-item">Applications</a>
+            <a href="#reports" class="nav-item">Reports</a>
+            <a href="#federations" class="nav-item">Federations</a>
+            <a href="#settings" class="nav-item">Settings</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">📊</div>
+                <div class="stat-value">12</div>
+                <div class="stat-label">Active Programs</div>
+                <div class="stat-change positive">↑ 2 from last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">💰</div>
+                <div class="stat-value">$156,300</div>
+                <div class="stat-label">Total Funding</div>
+                <div class="stat-change positive">↑ 15% from last quarter</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon yellow">⏳</div>
+                <div class="stat-value">8</div>
+                <div class="stat-label">Pending Applications</div>
+                <div class="stat-change negative">↓ 3 awaiting review</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">🏅</div>
+                <div class="stat-value">15</div>
+                <div class="stat-label">Sports Federations</div>
+                <div class="stat-change">No change</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h2>Quick Actions</h2>
+            <div class="action-grid">
+                <div class="action-card" onclick="newApplication()">
+                    <div class="action-icon">📝</div>
+                    <div class="action-title">New Application</div>
+                    <div class="action-description">Submit funding request</div>
+                </div>
+                <div class="action-card" onclick="createReport()">
+                    <div class="action-icon">📄</div>
+                    <div class="action-title">Create Report</div>
+                    <div class="action-description">Generate activity report</div>
+                </div>
+                <div class="action-card" onclick="trackActivity()">
+                    <div class="action-icon">📍</div>
+                    <div class="action-title">Track Activity</div>
+                    <div class="action-description">Update program status</div>
+                </div>
+                <div class="action-card" onclick="viewCalendar()">
+                    <div class="action-icon">📅</div>
+                    <div class="action-title">Calendar</div>
+                    <div class="action-description">View upcoming events</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2 class="table-title">Recent Activities</h2>
+                <div class="table-actions">
+                    <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" placeholder="Search activities...">
+                    </div>
+                    <button class="btn btn-primary" onclick="viewAllActivities()">View All</button>
+                </div>
+            </div>
+            
+            <div class="filter-container">
+                <select class="filter-select">
+                    <option>All Programs</option>
+                    <option>Development of National Sports System</option>
+                    <option>Athletes Support</option>
+                    <option>Coaches Education</option>
+                    <option>Sports Administration</option>
+                </select>
+                <select class="filter-select">
+                    <option>All Status</option>
+                    <option>Active</option>
+                    <option>Pending</option>
+                    <option>Completed</option>
+                </select>
+                <select class="filter-select">
+                    <option>All Federations</option>
+                    <option>Swimming</option>
+                    <option>Athletics</option>
+                    <option>Weightlifting</option>
+                    <option>Basketball</option>
+                </select>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Activity Name</th>
+                        <th>Program</th>
+                        <th>Federation</th>
+                        <th>Start Date</th>
+                        <th>Budget</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Regional Sports Medicine Training</strong></td>
+                        <td>National Sports System</td>
+                        <td>PNOC Medical Commission</td>
+                        <td>14 Apr 2025</td>
+                        <td>$56,300</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="viewDetails(1)">View</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Level 1 Coaching Course - Swimming</strong></td>
+                        <td>Coaches Education</td>
+                        <td>Palau Swimming</td>
+                        <td>01 Mar 2025</td>
+                        <td>$12,500</td>
+                        <td><span class="status-badge pending">Pending</span></td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="viewDetails(2)">View</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Youth Development Program</strong></td>
+                        <td>Athletes Support</td>
+                        <td>Palau Athletics</td>
+                        <td>15 Jan 2025</td>
+                        <td>$25,000</td>
+                        <td><span class="status-badge completed">Completed</span></td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="viewDetails(3)">View</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Administration Workshop</strong></td>
+                        <td>Sports Administration</td>
+                        <td>All Federations</td>
+                        <td>05 Feb 2025</td>
+                        <td>$8,200</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="viewDetails(4)">View</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Program Distribution Chart Placeholder -->
+        <div class="table-container" style="margin-top: 2rem;">
+            <h2 class="table-title">Funding Distribution by Program</h2>
+            <div style="height: 300px; display: flex; align-items: center; justify-content: center; background: var(--gray-50); border-radius: 0.5rem; margin-top: 1rem;">
+                <p style="color: var(--gray-500);">Chart visualization would be implemented here</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Quick action functions
+        function newApplication() {
+            alert('Opening new application form...');
+            // In production, this would navigate to the application form
+        }
+
+        function createReport() {
+            alert('Opening report generator...');
+            // In production, this would navigate to the report creation interface
+        }
+
+        function trackActivity() {
+            alert('Opening activity tracker...');
+            // In production, this would navigate to the activity tracking interface
+        }
+
+        function viewCalendar() {
+            alert('Opening calendar view...');
+            // In production, this would navigate to the calendar interface
+        }
+
+        function viewAllActivities() {
+            alert('Navigating to all activities...');
+            // In production, this would navigate to the activities list page
+        }
+
+        function viewDetails(id) {
+            alert(`Opening details for activity ${id}...`);
+            // In production, this would navigate to the activity detail page
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logging out...');
+                // In production, this would handle the logout process
+            }
+        }
+
+        // Search functionality placeholder
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            console.log('Searching for:', e.target.value);
+            // In production, this would filter the table data
+        });
+
+        // Filter functionality placeholder
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', function(e) {
+                console.log('Filter changed:', e.target.value);
+                // In production, this would filter the table data
+            });
+        });
+
+        // Simulate loading data
+        window.addEventListener('load', function() {
+            // In production, this would fetch real data from your backend
+            console.log('Dashboard loaded');
+        });
+    </script>
+</body>
+</html>
