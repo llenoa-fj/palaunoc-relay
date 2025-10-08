@@ -651,6 +651,52 @@
     </style>
 </head>
 <body>
+<script>
+// Authentication check - add this at the beginning of your index.html
+(function checkAuth() {
+    const token = localStorage.getItem('relayToken');
+    const user = localStorage.getItem('relayUser');
+    
+    // If not logged in, redirect to login page
+    if (!token || !user) {
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // Parse user data and update UI
+    try {
+        const userData = JSON.parse(user);
+        // Update the username display
+        const userNameElement = document.getElementById('userName');
+        if (userNameElement) {
+            userNameElement.textContent = userData.name || 'Test User';
+        }
+        const userRoleElement = document.getElementById('userRole');
+        if (userRoleElement) {
+            userRoleElement.textContent = userData.role || 'Administrator';
+        }
+    } catch (e) {
+        console.error('Error parsing user data:', e);
+    }
+})();
+
+// Update the logout function
+function showLogin() {
+    if (confirm('Are you sure you want to logout?')) {
+        // Clear stored data
+        localStorage.removeItem('relayToken');
+        localStorage.removeItem('relayUser');
+        localStorage.removeItem('itad_activities');
+        localStorage.removeItem('itad_vessels');
+        localStorage.removeItem('relayActivities');
+        localStorage.removeItem('relayApplications');
+        localStorage.removeItem('relayReports');
+        
+        // Redirect to login
+        window.location.href = 'login.html';
+    }
+}
+</script>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
@@ -1650,3 +1696,4 @@
     </script>
 </body>
 </html>
+
